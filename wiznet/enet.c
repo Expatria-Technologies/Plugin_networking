@@ -365,9 +365,11 @@ static void enet_process (void *data)
             }
         }
 
-        if(packet.len) {
+        //continue processing if there is data remaining or the pin is still low.
+        if(packet.len  || !DIGITAL_IN(SPI_IRQ_PORT, SPI_IRQ_PIN)) {
             task_delete(enet_process, NULL);
-            task_add_delayed(enet_process, NULL, 1);
+            //task_add_delayed(enet_process, NULL, 1);
+            task_add_immediate(enet_process, NULL);
         }
 
         if(irq & SIK_RECEIVED) {
